@@ -120,7 +120,10 @@ public class UDPServer {
                     {
                         System.out.println("Client: " + requestPayload);
                         String responsePayload = processPayloadRequest(requestPayload);
-                        response = packet.toBuilder().setPayload(responsePayload.getBytes()).create();
+                        if(responsePayload.getBytes().length> Packet.MAX_LEN)
+                            response = packet.toBuilder().setPayload("Data size exceeds allowed limit".getBytes()).create();
+                        else
+                            response = packet.toBuilder().setPayload(responsePayload.getBytes()).create();
                         channel.send(response.toBuffer(), router);
 
                     }
