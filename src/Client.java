@@ -20,7 +20,7 @@ import java.util.Set;
 /**
  * This class contains the implementation of UDP Client.
  */
-public class UDPClient {
+public class Client {
 
     static int acknowledgementCount = 0;
 
@@ -42,7 +42,7 @@ public class UDPClient {
         while (true) {
             String url = "";
             String request = "";
-            System.out.print("Please Enter valid command --> ");
+            System.out.print("Enter command : ");
             receivedPackets.clear();
             sequenceNumber = 0;
             acknowledgementCount = 0;
@@ -162,7 +162,7 @@ public class UDPClient {
                     .setPortNumber(serverAddr.getPort()).setPeerAddress(serverAddr.getAddress())
                     .setPayload(msg.getBytes()).create();
             channel.send(p.toBuffer(), routerAddr);
-            System.out.println("Sending the request to the Router...");
+            System.out.println("Request sent to the Router.");
 
             // Try to receive a packet within timeout.
             channel.configureBlocking(false);
@@ -172,7 +172,7 @@ public class UDPClient {
 
             Set<SelectionKey> keys = selector.selectedKeys();
             if (keys.isEmpty()) {
-                System.out.println("No response after timeout\nSending again");
+                System.out.println("Timeout and no response!\nRetrying...");
                 resend(channel, p, routerAddr);
             }
 
@@ -209,7 +209,7 @@ public class UDPClient {
 
                 buf.flip();
 
-                System.out.println("Connection closed..!");
+                System.out.println("Connection terminated");
                 keys.clear();
 
                 sequenceNumber++;

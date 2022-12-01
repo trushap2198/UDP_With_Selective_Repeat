@@ -11,7 +11,7 @@ import java.util.*;
  * This class contains the implementation of UDP Server.
  *
  */
-public class UDPServer {
+public class Server {
 
     private static int statusCode = 200;;
     static boolean debugFlag = false;
@@ -19,25 +19,20 @@ public class UDPServer {
     static List<String> filelist = new ArrayList<>();
 
     static File currentFolder;
-    static File parentDirectory;
     static int timeout = 3000;
     static int port = 8080;
-    List<String> clientRequestList;
 
 
     public static void main(String[] args) throws Exception {
         String request;
         List<String> requestList = new ArrayList<>();
 
-        //String dir = System.getProperty("user.dir");
-
-        System.out.println("\nCurrent Directory is -> " + dir + "");
-        System.out.print("-->");
+        System.out.print("Please start your server : ");
         Scanner sc = new Scanner(System.in);
 
         request = sc.nextLine();
         if (request.isEmpty()) {
-            System.out.println("Invalid Command Please try again!!");
+            System.out.println("Invalid Command entered, try again.");
         }
         String[] requestArray = request.split(" ");
 
@@ -52,18 +47,18 @@ public class UDPServer {
             port = Integer.parseInt(portStr);
         }
 
-        if (requestList.contains("-d")) {
+        if (requestList.contains("-d"))
             dir = request.substring(request.indexOf("-d")+3);
-            System.out.println("Selected directory for operations : " + dir + "\n");
-        }
 
-        //debugFlag = true;
+        System.out.println("\nCurrent Working Directory : " + dir + "");
+
+
         if (debugFlag)
-            System.out.println("Server is up and it assign to port Number: " + port);
+            System.out.println("Server is now running at port " + port);
 
         currentFolder = new File(dir);
 
-        UDPServer server = new UDPServer();
+        Server server = new Server();
 
         Runnable task = () -> {
             try {
@@ -74,11 +69,6 @@ public class UDPServer {
         };
         Thread thread = new Thread(task);
         thread.start();
-
-
-       // server.listenAndServe(port);
-
-
 
     }
 
@@ -416,7 +406,7 @@ public class UDPServer {
 
         } catch (IOException ex) {
             if(debugFlag)
-                System.out.println("Error Writing file named '" + fileName + "'" + ex);
+                System.out.println("Error while writing to file : '" + fileName + "'" + ex);
         }
     }
 
@@ -431,7 +421,7 @@ public class UDPServer {
         {
 
             if(fileName.canRead() == false){
-                lines.append("Cannot read the file");
+                lines.append("Unable to read the file");
 
             }
             else {
@@ -447,7 +437,7 @@ public class UDPServer {
         catch(IOException ex)
         {
             if(debugFlag)
-                System.out.println("Error reading file named '" + fileName + "'" + ex);
+                System.out.println("Error reading file : '" + fileName + "'" + ex);
         }
 
         return lines.toString();
