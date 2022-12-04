@@ -23,8 +23,11 @@ public class Server {
     static int port = 8080;
 
 
+
     public static void main(String[] args) throws Exception {
         String request;
+
+
         List<String> requestList = new ArrayList<>();
 
         System.out.print("Please start your server : ");
@@ -97,7 +100,7 @@ public class Server {
                     // Send the response to the router not the client.
                     // The peer address of the packet is the address of the client already.
                     // We can use toBuilder to copy properties of the current packet.
-                    // This demonstrate how to create a new packet from an existing packet.
+                    // This demonstrates how to create a new packet from an existing packet.
 
                     if (requestPayload.equals("Hi S"))
                     {
@@ -110,7 +113,7 @@ public class Server {
                     {
                         System.out.println("Client: " + requestPayload);
                         String responsePayload = processPayloadRequest(requestPayload);
-                        if(responsePayload.getBytes().length> Packet.MAX_LEN)
+                        if(responsePayload.getBytes().length > Packet.MAX_LEN)
                             response = packet.toBuilder().setPayload("Data size exceeds allowed limit".getBytes()).create();
                         else
                             response = packet.toBuilder().setPayload(responsePayload.getBytes()).create();
@@ -148,7 +151,10 @@ public class Server {
         String response = "";
         String verboseBody = "";
         boolean verbose = false;
+        boolean overwrite = true;
 
+        if(request.contains("-overwrite=false"))
+            overwrite = false;
         List<String> requestData = Arrays.asList(request.split(" "));
 
         if(debugFlag)
@@ -283,12 +289,14 @@ public class Server {
 
             for(int i = index + 1 ; i < requestData.size() ; i++)
             {
-                data = data + requestData.get(i) + " ";
+                //System.out.println(data + " data is this");
+                if(!requestData.get(i).equals("-overwrite=false"))
+                    data = data + requestData.get(i) + " ";
             }
 
 
             File file = new File(dir + "/" + requestedFile);
-            writeResponseToFile(file, data);
+            writeResponseToFile(file, data,overwrite);
 
         }
 
@@ -298,7 +306,10 @@ public class Server {
         }
         else if(statusCode == 201)
         {
-            body = body + "\t\"status\": \"" + "HTTP/1.1 201 FILE OVER-WRITTEN" + "\",\n";
+            if(overwrite)
+                body = body + "\t\"status\": \"" + "HTTP/1.1 201 FILE WAS OVER-WRITTEN" + "\",\n";
+            else
+                body = body + "\t\"status\": \"" + "HTTP/1.1 201 FILE WAS NOT OVER-WRITTEN" + "\",\n";
         }
         else if(statusCode == 202)
         {
@@ -392,12 +403,19 @@ public class Server {
 
 
 
-    static public void writeResponseToFile(File fileName, String data)
+    static public void writeResponseToFile(File fileName, String data, boolean flagOverwrite)
     {
         try
         {
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName));
+            BufferedWriter bufferedWriter;
 
+            if (flagOverwrite == true) {
+                System.out.println("Over writing is set to true");
+                bufferedWriter = new BufferedWriter(new FileWriter(fileName));
+            } else {
+                System.out.println("Appending the data");
+                bufferedWriter = new BufferedWriter(new FileWriter(fileName, true));
+            }
             bufferedWriter.write(data);
             bufferedWriter.close();
 
@@ -409,6 +427,8 @@ public class Server {
                 System.out.println("Error while writing to file : '" + fileName + "'" + ex);
         }
     }
+
+
 
 
 
