@@ -10,21 +10,19 @@ For Server :
 
 httpfs -v -p 8080
 
-httpfs -v -p 8080 -d D:\Concordia studies\Computer_Networks\HarshBahi\Assignments\Assignment 3\Demo
+httpfs -v -p 8080 -d D:\Concordia studies\Computer_Networks\Assignment-3-UDP\Assignment 3\Demo
 
 
 For Client :
 
 httpc http://localhost:8080/get/
-httpc http://localhost:8080/post/PostTestFile.txt -v -d '{"Assignment":3, "Course" : 6461}'
-httpc http://localhost:8080/post/PostTestFile.txt -v -h Content-Type:application/json -d '{"Assignment":3, "Course" : 6461}'
-httpc http://localhost:8080/post/PostTestFile.txt -d '{"Assignment":3, "Course" : 6461}'
+httpc http://localhost:8080/post/PostFile1.txt -v -d '{"Assignment":3, "Course": 6461}'
+httpc http://localhost:8080/post/PostFile2.txt -v -h Content-Type:application/json -d '{"Assignment":3, "Course" : 6461}'
+httpc http://localhost:8080/post/PostFile1.txt -d '{"Private":1220, "James": "Mordor"}' -overwrite=false
 httpc http://localhost:8080/post/JSONTestFile.json -d '{"Assignment":3}'
-httpc http://localhost:8080/get/GetTestFile.txt
-httpc http://localhost:8080/get/PostTestFile.txt
-httpc http://localhost:8080/post/PostTestFile2.txt -d Hello World
+httpc http://localhost:8080/get/GetFile.txt
+httpc http://localhost:8080/get/PostFile1.txt
+httpc http://localhost:8080/post/PostFile2.txt -d Hello World
 
 httpc http://localhost:8080/get/griffin.txt
-httpc http://localhost:8080/get/demo_file.txt
-
-
+httpc http://localhost:8080/get/demo_pack/demo_file.txt

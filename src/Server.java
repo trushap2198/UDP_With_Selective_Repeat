@@ -140,7 +140,7 @@ public class Server {
     }
 
     /**
-     * This method proccesses the payload request from the client's input and will return the response body.
+     * This method processes the payload request from the client's input and will return the response body.
      *
      * @param request client's request
      * @return response body
@@ -179,8 +179,6 @@ public class Server {
 
         if(requestData.contains("-v"))
             verbose = true;
-
-
 
         String body = "{\n";
         body = body + "\t\"args\":";
@@ -244,7 +242,7 @@ public class Server {
         else if(requestType.equals("GetFileContent"))
         {
             String fileContent = "";
-
+            filelist = new ArrayList<>();
             String requestedFile;
             requestedFile = url.substring(url.indexOf("get/") + 4);
 
@@ -275,7 +273,7 @@ public class Server {
 
             String requestedFile;
             String data = "";
-
+            filelist = new ArrayList<>();
             requestedFile = url.substring(url.indexOf("post/") + 5);
             List<String> files = getFilesFromDir(currentFolder,filelist);
 
@@ -371,32 +369,30 @@ public class Server {
         }
 
         for (File file : currentDir.listFiles()) {
+            int index = file.getPath().indexOf(dir) + dir.length();
+            String file_str = file.getPath().substring(index+1).replace("\\","/");
             if (!file.isDirectory()) {
-                if(Arrays.asList(currentFolder.listFiles()).contains(file))
-                {
-                    if(!filelist.contains(file.getName()))
-                        filelist.add(file.getName());
+
+
+                    if(!filelist.contains(file_str)) {
+                        filelist.add(file_str);
+                    }
                     else
                         ;
-                }
-                else{
-                    file.setExecutable(false);
-                    file.setReadable(false);
-                    file.setWritable(false);
-                    if(!filelist.contains(file.getName()))
-                        filelist.add(file.getName());
-                }
             }
             else
             {
-                if(!filelist.contains(file.getName()))
-                    filelist.add(file.getName());
+
+                if(!filelist.contains(file_str))
+                {
+                    filelist.add(file_str);
+                }
+
 
                 //System.out.println("dir is recusive" + filelist);
                 getFilesFromDir(file,filelist);
             }
-            //to list the files and the subdirectories, but the packet size is an issue!!!
-           // filelist.add(file.getName());
+
         }
         return filelist;
     }
@@ -436,11 +432,13 @@ public class Server {
     {
         StringBuilder lines = new StringBuilder("");
         String line = null;
+        //System.out.println("Path  of the file reading:+ " + fileName.getPath());
 
         try
         {
 
-            if(fileName.canRead() == false){
+            if(Arrays.asList(currentFolder.listFiles()).contains(fileName))
+            {
                 lines.append("Unable to read the file");
 
             }
